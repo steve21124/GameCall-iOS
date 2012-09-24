@@ -4052,10 +4052,10 @@ YoArts @YoArts</string>
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
+        <segue reference="leG-AL-Cjj"/>
         <segue reference="j7L-zH-FOU"/>
-        <segue reference="txi-6z-Ik9"/>
-        <segue reference="sJc-k6-rVf"/>
         <segue reference="mIk-5A-6Gt"/>
+        <segue reference="sJc-k6-rVf"/>
         <segue reference="pUi-Re-5fH"/>
     </inferredMetricsTieBreakers>
 </document>
