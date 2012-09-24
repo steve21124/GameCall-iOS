@@ -11,6 +11,7 @@
 
 enum {
     GCSettingsTableViewSectionGeneral = 0,
+    GCSettingsTableViewSectionSocial,
     GCSettingsTableViewSectionAbout,
     GCSettingsTableViewSectionLegal
 };

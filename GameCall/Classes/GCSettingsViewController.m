@@ -12,18 +12,68 @@
 
 @interface GCSettingsViewController () <UITableViewDataSource, UITableViewDelegate, MFMailComposeViewControllerDelegate>
 
+@property (weak, nonatomic) IBOutlet UITableViewCell *facebookCell;
+@property (weak, nonatomic) IBOutlet UITableViewCell *twitterCell;
 @property (weak, nonatomic) IBOutlet UITableViewCell *supportCell;
 
+- (IBAction)linkCurrentUserWithFacebook:(UIButton *)button;
+- (IBAction)linkCurrentUserWithTwitter:(UIButton *)button;
 - (IBAction)sendEmailToSupport;
 
 - (void)customizeTabBarItem;
 - (void)customizeTableView;
+- (void)customizeLinkButtons;
 
 @end
 
 @implementation GCSettingsViewController
 
 #pragma mark - GCSettingsViewController
+
+- (IBAction)linkCurrentUserWithFacebook:(UIButton *)button {    
+    if ([PFFacebookUtils isLinkedWithUser:[PFUser currentUser]]) {
+        return;
+    }
+    
+    [PFFacebookUtils linkUser:[PFUser currentUser] permissions:@[ @"email", @"publish_actions" ] block:^(BOOL succeeded, NSError *error) {
+        if (!succeeded) {
+            [SVProgressHUD showErrorWithStatus:NSLocalizedString(@"Unable to link this account with Facebook", nil)];
+            return;
+        }
+        
+        UIImage *normalBackgroundImage = [UIImage imageNamed:@"button-add-friend-normal"];
+        UIImage *highlightedBackgroundImage = [UIImage imageNamed:@"button-add-friend-highlighted"];
+     
+        [button setBackgroundImage:normalBackgroundImage forState:UIControlStateNormal];
+        [button setBackgroundImage:highlightedBackgroundImage forState:UIControlStateHighlighted];
+        button.titleLabel.adjustsFontSizeToFitWidth = YES;
+        button.titleLabel.text = NSLocalizedString(@"Connected", nil);
+        button.contentEdgeInsets = UIEdgeInsetsMake(2.f, 10.f, 0.f, 0.f);
+        button.userInteractionEnabled = NO;
+    }];
+}
+
+- (IBAction)linkCurrentUserWithTwitter:(UIButton *)button {
+    if ([PFTwitterUtils isLinkedWithUser:[PFUser currentUser]]) {
+        return;
+    }
+    
+    [PFTwitterUtils linkUser:[PFUser currentUser] block:^(BOOL succeeded, NSError *error) {
+        if (!succeeded) {
+            [SVProgressHUD showErrorWithStatus:NSLocalizedString(@"Unable to link this account with Twitter", nil)];
+            return;
+        }
+        
+        UIImage *normalBackgroundImage = [UIImage imageNamed:@"button-add-friend-normal"];
+        UIImage *highlightedBackgroundImage = [UIImage imageNamed:@"button-add-friend-highlighted"];
+        
+        [button setBackgroundImage:normalBackgroundImage forState:UIControlStateNormal];
+        [button setBackgroundImage:highlightedBackgroundImage forState:UIControlStateHighlighted];
+        button.titleLabel.adjustsFontSizeToFitWidth = YES;
+        button.titleLabel.text = NSLocalizedString(@"Connected", nil);
+        button.userInteractionEnabled = NO;
+    }];
+}
 
 - (IBAction)sendEmailToSupport {
     if (![MFMailComposeViewController canSendMail]) {
@@ -57,6 +107,42 @@
     self.tableView.backgroundView = [[UIImageView alloc] initWithImage:backgroundImage];
 }
 
+- (void)customizeLinkButtons {
+    NSString *facebookNormalBackgroundImageName, *facebookHighlightedBackgroundImageName, *facebookTitle;
+    UIButton *facebookButton = (UIButton *)[self.facebookCell viewWithTag:100];
+    BOOL isFacebookButtonEnabled = ![PFFacebookUtils isLinkedWithUser:[PFUser currentUser]];
+    
+    facebookNormalBackgroundImageName = [PFFacebookUtils isLinkedWithUser:[PFUser currentUser]] ? @"button-add-friend-normal" : @"button-invite-normal";
+    facebookHighlightedBackgroundImageName = [PFFacebookUtils isLinkedWithUser:[PFUser currentUser]] ? @"button-add-friend-highlighted" : @"button-invite-highlighted";
+    facebookTitle = [PFFacebookUtils isLinkedWithUser:[PFUser currentUser]] ? NSLocalizedString(@"Connected", nil) : NSLocalizedString(@"Connect", nil);
+    
+    UIImage *facebookNormalBackgroundImage = [UIImage imageNamed:facebookNormalBackgroundImageName];
+    UIImage *facebookHighlightedBackgroundImage = [UIImage imageNamed:facebookHighlightedBackgroundImageName];
+    
+    [facebookButton setBackgroundImage:facebookNormalBackgroundImage forState:UIControlStateNormal];
+    [facebookButton setBackgroundImage:facebookHighlightedBackgroundImage forState:UIControlStateHighlighted];
+    facebookButton.titleLabel.adjustsFontSizeToFitWidth = YES;
+    facebookButton.titleLabel.text = facebookTitle;
+    facebookButton.userInteractionEnabled = isFacebookButtonEnabled;
+    
+    NSString *twitterNormalBackgroundImageName, *twitterHighlightedBackgroundImageName, *twitterTitle;
+    UIButton *twitterButton = (UIButton *)[self.twitterCell viewWithTag:100];
+    BOOL isTwitterButtonEnabled = ![PFTwitterUtils isLinkedWithUser:[PFUser currentUser]];
+    
+    twitterNormalBackgroundImageName = [PFTwitterUtils isLinkedWithUser:[PFUser currentUser]] ? @"button-add-friend-normal" : @"button-invite-normal";
+    twitterHighlightedBackgroundImageName = [PFTwitterUtils isLinkedWithUser:[PFUser currentUser]] ? @"button-add-friend-highlighted" : @"button-invite-highlighted";
+    twitterTitle = [PFTwitterUtils isLinkedWithUser:[PFUser currentUser]] ? NSLocalizedString(@"Connected", nil) : NSLocalizedString(@"Connect", nil);
+    
+    UIImage *twitterNormalBackgroundImage = [UIImage imageNamed:twitterNormalBackgroundImageName];
+    UIImage *twitterHighlightedBackgroundImage = [UIImage imageNamed:twitterHighlightedBackgroundImageName];
+    
+    [twitterButton setBackgroundImage:twitterNormalBackgroundImage forState:UIControlStateNormal];
+    [twitterButton setBackgroundImage:twitterHighlightedBackgroundImage forState:UIControlStateHighlighted];
+    twitterButton.titleLabel.adjustsFontSizeToFitWidth = YES;
+    twitterButton.titleLabel.text = twitterTitle;
+    twitterButton.userInteractionEnabled = isTwitterButtonEnabled;
+}
+
 #pragma mark - MFMailComposeViewControllerDelegate
 
 - (void)mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error {
@@ -69,6 +155,9 @@
     switch (section) {
         case GCSettingsTableViewSectionGeneral:
             return NSLocalizedString(@"General", nil);
+            
+        case GCSettingsTableViewSectionSocial:
+            return NSLocalizedString(@"Social", nil);
             
         case GCSettingsTableViewSectionAbout:
             return NSLocalizedString(@"About", nil);
@@ -109,6 +198,7 @@
     
     if (cell == self.supportCell) {
         [self sendEmailToSupport];
+        return;
     }
 }
 
@@ -118,9 +208,12 @@
     [super viewDidLoad];
     
     [self customizeTableView];
+    [self customizeLinkButtons];
 }
 
 - (void)viewDidUnload {
+    [self setFacebookCell:nil];
+    [self setTwitterCell:nil];
     [self setSupportCell:nil];
     
     [super viewDidUnload];
