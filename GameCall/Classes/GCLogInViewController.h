@@ -9,6 +9,6 @@
 #import <UIKit/UIKit.h>
 #import <Accounts/Accounts.h>
 
-@interface GCLogInViewController : UITableViewController
+@interface GCLogInViewController : UIViewController
 
 @end

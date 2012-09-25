@@ -29,6 +29,7 @@ static NSString * const GCValidEmailRegex =
 
 @interface GCLogInViewController () <UITextFieldDelegate>
 
+@property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (strong, nonatomic) IBOutletCollection(UIView) NSArray *connectControls;
 @property (weak, nonatomic) IBOutlet UIButton *facebookButton;
 @property (weak, nonatomic) IBOutlet UIButton *twitterButton;
@@ -36,6 +37,7 @@ static NSString * const GCValidEmailRegex =
 @property (strong, nonatomic) GCLogInToolBar *inputAccessoryView;
 @property (weak, nonatomic) IBOutlet UITextField *emailTextField;
 @property (weak, nonatomic) IBOutlet UITextField *passwordTextField;
+@property (strong, nonatomic) UITextField *activeField;
 @property (weak, nonatomic) IBOutlet UIButton *logInButton;
 
 - (IBAction)didTapDismissButton:(UIButton *)button;
@@ -49,7 +51,10 @@ static NSString * const GCValidEmailRegex =
 - (void)reachabilityDidChange:(NSNotification *)notification;
 - (void)updateInterfaceWithReachability:(Reachability *)reachability;
 
-- (void)customizeTableView;
+- (void)keyboardDidShow:(NSNotification *)notification;
+- (void)keyboardWillHide:(NSNotification *)notification;
+
+- (void)customizeView;
 
 @end
 
@@ -295,14 +300,45 @@ static NSString * const GCValidEmailRegex =
     [self validateLogIn:nil];
 }
 
-- (void)customizeTableView {
+- (void)keyboardDidShow:(NSNotification *)notification {    
+//    CGSize size = [[notification.userInfo objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
+//    UIEdgeInsets contentInsets = UIEdgeInsetsMake(0.f, 0.f, size.height, 0.f);
+//        
+//    self.scrollView.contentInset = contentInsets;
+//    self.scrollView.scrollIndicatorInsets = contentInsets;
+//    
+//    CGRect rect = self.view.frame;
+//    rect.size.height -= size.height;
+//    
+//    if (!CGRectContainsPoint(rect, self.activeField.frame.origin) ) {
+//        CGPoint point = CGPointMake(0.0, self.activeField.frame.origin.y - size.height);
+//        [self.scrollView setContentOffset:point animated:YES];
+//    }
+    CGSize size = [[notification.userInfo objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
+    CGPoint point = CGPointMake(0.f, self.activeField.frame.origin.y - size.height + 70.f);
+    
+    [self.scrollView setContentOffset:point animated:YES];
+}
+
+- (void)keyboardWillHide:(NSNotification *)notification {    
+    [self.scrollView setContentOffset:CGPointZero animated:YES];
+}
+
+- (void)customizeView {
     UIImage *backgroundImage = [[UIImage imageNamed:@"background"] resizableImageWithCapInsets:UIEdgeInsetsZero];
     
-    self.tableView.backgroundColor = [UIColor clearColor];
-    self.tableView.backgroundView = [[UIImageView alloc] initWithImage:backgroundImage];
+    self.view.backgroundColor = [UIColor colorWithPatternImage:backgroundImage];
 }
 
 #pragma mark - UITextFieldDelegate
+
+- (void)textFieldDidBeginEditing:(UITextField *)textField {
+    self.activeField = textField;
+}
+
+- (void)textFieldDidEndEditing:(UITextField *)textField {
+    self.activeField = nil;
+}
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
     [textField resignFirstResponder];
@@ -310,26 +346,24 @@ static NSString * const GCValidEmailRegex =
     return YES;
 }
 
-#pragma mark - UITableViewDelegate
-
-- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
-    cell.backgroundColor = [UIColor clearColor];
-}
-
 #pragma mark - UIViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    [self customizeTableView];
+    [self customizeView];
     
     AppDelegate *appDelegate = [UIApplication sharedApplication].delegate;
     
     [self updateInterfaceWithReachability:appDelegate.reachability];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reachabilityDidChange:) name:kReachabilityChangedNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardDidShow:) name:UIKeyboardWillChangeFrameNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
 }
 
 - (void)viewDidUnload {
+    [self setScrollView:nil];
     [self setConnectControls:nil];
     [self setFacebookButton:nil];
     [self setTwitterButton:nil];
@@ -337,6 +371,7 @@ static NSString * const GCValidEmailRegex =
     [self setInputAccessoryView:nil];
     [self setEmailTextField:nil];
     [self setPasswordTextField:nil];
+    [self setActiveField:nil];
     [self setLogInButton:nil];
 
     [super viewDidUnload];
@@ -360,6 +395,8 @@ static NSString * const GCValidEmailRegex =
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:kReachabilityChangedNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardDidShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
 }
 
 @end
