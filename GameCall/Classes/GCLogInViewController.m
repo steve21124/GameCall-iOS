@@ -301,21 +301,8 @@ static NSString * const GCValidEmailRegex =
 }
 
 - (void)keyboardDidShow:(NSNotification *)notification {    
-//    CGSize size = [[notification.userInfo objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
-//    UIEdgeInsets contentInsets = UIEdgeInsetsMake(0.f, 0.f, size.height, 0.f);
-//        
-//    self.scrollView.contentInset = contentInsets;
-//    self.scrollView.scrollIndicatorInsets = contentInsets;
-//    
-//    CGRect rect = self.view.frame;
-//    rect.size.height -= size.height;
-//    
-//    if (!CGRectContainsPoint(rect, self.activeField.frame.origin) ) {
-//        CGPoint point = CGPointMake(0.0, self.activeField.frame.origin.y - size.height);
-//        [self.scrollView setContentOffset:point animated:YES];
-//    }
     CGSize size = [[notification.userInfo objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
-    CGPoint point = CGPointMake(0.f, self.activeField.frame.origin.y - size.height + 70.f);
+    CGPoint point = CGPointMake(0.f, self.activeField.frame.origin.y - size.height + 200.f);
     
     [self.scrollView setContentOffset:point animated:YES];
 }
