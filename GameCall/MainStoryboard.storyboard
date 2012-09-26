@@ -1914,22 +1914,13 @@
                                                     <color key="shadowColor" white="1" alpha="0.69999999999999996" colorSpace="calibratedWhite"/>
                                                     <size key="shadowOffset" width="0.0" height="1"/>
                                                 </label>
-                                                <button opaque="NO" tag="100" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="WSa-RJ-9Ba">
-                                                    <rect key="frame" x="226" y="8" width="84" height="28"/>
+                                                <switch opaque="NO" tag="100" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" id="Aen-LZ-Tbm">
+                                                    <rect key="frame" x="231" y="10" width="79" height="27"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="11"/>
-                                                    <inset key="contentEdgeInsets" minX="-12" minY="0.0" maxX="0.0" maxY="0.0"/>
-                                                    <state key="normal" title="Connect" backgroundImage="button-invite-normal.png">
-                                                        <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                                    </state>
-                                                    <state key="highlighted" title="Connect" backgroundImage="button-invite-highlighted.png">
-                                                        <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                    </state>
                                                     <connections>
-                                                        <action selector="linkCurrentUserWithFacebook:" destination="sX8-K7-bII" eventType="touchUpInside" id="iKo-nh-wVE"/>
+                                                        <action selector="didTapSocialSwitch:" destination="sX8-K7-bII" eventType="valueChanged" id="bkA-34-jmx"/>
                                                     </connections>
-                                                </button>
+                                                </switch>
                                             </subviews>
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
@@ -1956,22 +1947,13 @@
                                                     <color key="shadowColor" white="1" alpha="0.69999999999999996" colorSpace="calibratedWhite"/>
                                                     <size key="shadowOffset" width="0.0" height="1"/>
                                                 </label>
-                                                <button opaque="NO" tag="100" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="Wys-zs-9ei">
-                                                    <rect key="frame" x="226" y="8" width="84" height="28"/>
+                                                <switch opaque="NO" tag="100" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" id="dTg-vO-1fk">
+                                                    <rect key="frame" x="231" y="8" width="79" height="27"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="11"/>
-                                                    <inset key="contentEdgeInsets" minX="-12" minY="0.0" maxX="0.0" maxY="0.0"/>
-                                                    <state key="normal" title="Connect" backgroundImage="button-invite-normal.png">
-                                                        <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                                    </state>
-                                                    <state key="highlighted" title="Connect" backgroundImage="button-invite-highlighted.png">
-                                                        <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                    </state>
                                                     <connections>
-                                                        <action selector="linkCurrentUserWithTwitter:" destination="sX8-K7-bII" eventType="touchUpInside" id="dhZ-jM-4ZT"/>
+                                                        <action selector="didTapSocialSwitch:" destination="sX8-K7-bII" eventType="valueChanged" id="Xdh-es-Tmj"/>
                                                     </connections>
-                                                </button>
+                                                </switch>
                                             </subviews>
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
@@ -4043,8 +4025,7 @@ YoArts @YoArts</string>
         <class className="GCSettingsViewController" superclassName="UITableViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/GCSettingsViewController.h"/>
             <relationships>
-                <relationship kind="action" name="linkCurrentUserWithFacebook:" candidateClass="UIButton"/>
-                <relationship kind="action" name="linkCurrentUserWithTwitter:" candidateClass="UIButton"/>
+                <relationship kind="action" name="didTapSocialSwitch:" candidateClass="UISwitch"/>
                 <relationship kind="action" name="sendEmailToSupport"/>
                 <relationship kind="outlet" name="facebookCell" candidateClass="UITableViewCell"/>
                 <relationship kind="outlet" name="supportCell" candidateClass="UITableViewCell"/>

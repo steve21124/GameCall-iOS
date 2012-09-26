@@ -285,8 +285,8 @@ static NSString * const kGCDiscloseVenueDetailsSegueIdentifier = @"GCDiscloseVen
 - (void)mapView:(MKMapView *)mapView annotationView:(MKAnnotationView *)view calloutAccessoryControlTapped:(UIButton *)button {
     if (button.buttonType == UIButtonTypeCustom) {
         button.selected = !button.selected;
-        
-        [SVProgressHUD showWithStatus:NSLocalizedString(@"Updating favorites...", nil)];
+                
+        [SVProgressHUD showWithStatus:NSLocalizedString(@"Updating favorites", nil)];
         
         NSString *address = [self.annotation.details valueForKeyPath:@"formatted_address"];
         
@@ -302,7 +302,7 @@ static NSString * const kGCDiscloseVenueDetailsSegueIdentifier = @"GCDiscloseVen
                         [SVProgressHUD showErrorWithStatus:NSLocalizedString(@"Unable to remove favorite", nil)];
                         return;
                     }
-                    
+
                     [[NSNotificationCenter defaultCenter] postNotificationName:GCFavoriteRemovedNotification object:nil];
                     [SVProgressHUD showSuccessWithStatus:NSLocalizedString(@"Favorite removed", nil)];
                 }];
@@ -314,7 +314,7 @@ static NSString * const kGCDiscloseVenueDetailsSegueIdentifier = @"GCDiscloseVen
                 venue = [[GCVenue alloc] initWithAnnotation:self.annotation];
             }
             
-            [venue saveEventually:^(BOOL succeeded, NSError *error) {
+            [venue saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
                 if (!succeeded) {
                     [SVProgressHUD showErrorWithStatus:NSLocalizedString(@"Unable to save as new venue", nil)];
                     return;
